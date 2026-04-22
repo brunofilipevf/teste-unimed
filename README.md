@@ -11,7 +11,7 @@
 - **OS:** Windows 10 Pro
 - **IDE/Editor:** Sublime Text 4
 - **Servidor Local:** Laragon 6.0 (Apache)
-- **Backend:** PHP 8.1 (Puro, utilizando PDO)
+- **Backend:** PHP 8.1
 - **Banco de Dados:** SQLite 3
 
 **Justificativa da Escolha:**

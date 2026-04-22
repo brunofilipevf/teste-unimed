@@ -21,11 +21,13 @@ Conforme permitido pelo edital na seção *"qualquer outra escolha tecnológica 
 1. **Otimização do Tempo de Prova:** Utilização do Laragon, pois é um ambiente já configurado e funcional.
 2. **Foco na Lógica:** PHP e C# compartilham fundamentos de orientação a objetos e estruturação de APIs.
 3. **Transparência:** Katas 3 e 4 entregues como análise documentada, demonstrando compreensão dos requisitos.
-4. **Portabilidade:** SQLite executa sem configuração adicional de banco de dados.
+4. **Simplicidade:** Persistência em JSON e arrays elimina necessidade de configuração de banco de dados.
+
+**Observação sobre o Kata 1:**
+O arquivo `schema.sql` representa a **modelagem conceitual** do banco de dados (Parte C do Kata 1), mas não foi integrado ao código. A implementação utiliza arrays em memória.
 
 ### 3. Instruções para Executar Cada Kata Localmente
 
 **Pré-requisitos:**
 - PHP 8.1 ou superior instalado.
-- Apache instalado e rodando.
-- Extensão `pdo_sqlite` habilitada no `php.ini`.
+- Apache (Laragon) ou servidor embutido do PHP.

@@ -1,0 +1,7 @@
+id_pedido,nome_cliente,cidade_normalizada,estado,valor_total,status_pedido,data_pedido,data_prevista_entrega,data_realizada_entrega,atraso_dias,status_entrega
+1,"João Silva",Caruaru,PE,150.5,ENTREGUE,2026-01-10,2026-01-15,2026-01-14,-1,ENTREGUE
+2,"Maria Souza",Recife,PE,89.9,ENTREGUE,2026-01-15,2026-01-20,2026-01-21,1,ENTREGUE
+3,"Pedro Santos",Olinda,PE,1200,CANCELADO,2026-01-20,,,,SEM_ENTREGA
+4,"Ana Oliveira",Recife,PE,45.75,ENTREGUE,2026-01-22,2026-01-28,,,PENDENTE
+5,"Carlos Lima",Gravatá,PE,320,PENDENTE,2026-01-25,2026-01-30,,,PENDENTE
+7,"João Silva",Caruaru,PE,75.9,ENTREGUE,2026-02-01,2026-02-05,2026-02-04,-1,ENTREGUE

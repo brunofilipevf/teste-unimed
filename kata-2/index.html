@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { max-width: 600px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #333; }
+        .form { display: flex; gap: 10px; margin-bottom: 20px; }
+        .form input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .form button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .filtros { margin-bottom: 20px; }
+        .filtros button { padding: 8px 16px; margin-right: 10px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; }
+        .filtros button.ativo { background: #007bff; color: white; border-color: #007bff; }
+        .task { display: flex; align-items: center; padding: 12px; border: 1px solid #eee; border-radius: 4px; margin-bottom: 8px; background: #fafafa; }
+        .task input[type="checkbox"] { margin-right: 12px; width: 20px; height: 20px; cursor: pointer; }
+        .task span { flex: 1; }
+        .task .concluida { text-decoration: line-through; color: #888; }
+        .task button { padding: 6px 12px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .empty { text-align: center; color: #888; padding: 40px; }
+    </style>
+</head>
+
+<body>
+
+<h1>Minhas Tarefas</h1>
+
+<div class="form">
+    <input type="text" id="titulo" placeholder="Nova tarefa..." maxlength="100">
+    <button onclick="criarTarefa()">Adicionar</button>
+</div>
+
+<div class="filtros">
+    <button id="filtroTodas" class="ativo" onclick="filtrar('')">Todas</button>
+    <button id="filtroPendentes" onclick="filtrar('pendente')">Pendentes</button>
+    <button id="filtroConcluidas" onclick="filtrar('concluida')">Concluídas</button>
+</div>
+
+<div id="lista"></div>
+
+<script>
+    const BASE_URL = '/kata-2/api.php';
+    let filtroAtual = '';
+    let tarefas = [];
+
+    async function carregarTarefas() {
+        let url = BASE_URL;
+
+        if (filtroAtual) {
+            url += '?status=' + filtroAtual;
+        }
+
+        const res = await fetch(url);
+        tarefas = await res.json();
+        renderizar();
+    }
+
+    function renderizar() {
+        const lista = document.getElementById('lista');
+
+        if (!Array.isArray(tarefas) || tarefas.length === 0) {
+            lista.innerHTML = '<div class="empty">Nenhuma tarefa encontrada</div>';
+            return;
+        }
+
+        lista.innerHTML = tarefas.map(t => `
+            <div class="task">
+                <input type="checkbox" ${t.status === 'concluida' ? 'checked' : ''} onchange="alternarStatus(${t.id}, this.checked)">
+                <span class="${t.status === 'concluida' ? 'concluida' : ''}">${t.titulo}</span>
+                <button onclick="deletarTarefa(${t.id})">Excluir</button>
+            </div>
+        `).join('');
+    }
+
+    async function criarTarefa() {
+        const input = document.getElementById('titulo');
+        const titulo = input.value.trim();
+
+        if (!titulo) {
+            alert('Digite um título');
+            return;
+        }
+
+        const res = await fetch(BASE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ titulo: titulo })
+        });
+
+        if (!res.ok) {
+            const erro = await res.json();
+            alert(erro.error);
+            return;
+        }
+
+        input.value = '';
+        carregarTarefas();
+    }
+
+    async function alternarStatus(id, concluida) {
+        const res = await fetch(BASE_URL, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: id,
+                status: concluida ? 'concluida' : 'pendente'
+            })
+        });
+
+        if (!res.ok) {
+            const erro = await res.json();
+            alert(erro.error);
+            return;
+        }
+
+        carregarTarefas();
+    }
+
+    async function deletarTarefa(id) {
+        if (!confirm('Excluir esta tarefa?')) {
+            return;
+        }
+
+        const res = await fetch(BASE_URL, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        });
+
+        if (!res.ok) {
+            const erro = await res.json();
+            alert(erro.error);
+            return;
+        }
+
+        carregarTarefas();
+    }
+
+    function filtrar(status) {
+        filtroAtual = status;
+
+        document.querySelectorAll('.filtros button').forEach(btn => btn.classList.remove('ativo'));
+
+        if (status === '') {
+            document.getElementById('filtroTodas').classList.add('ativo');
+        } else if (status === 'pendente') {
+            document.getElementById('filtroPendentes').classList.add('ativo');
+        } else {
+            document.getElementById('filtroConcluidas').classList.add('ativo');
+        }
+
+        carregarTarefas();
+    }
+
+    carregarTarefas();
+</script>
+
+</body>
+</html>
